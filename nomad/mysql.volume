@@ -1,0 +1,16 @@
+id = "mysql"
+name = "mysql"
+type = "csi"
+plugin_id = "nfs"
+
+capability {
+  access_mode     = "multi-node-multi-writer"
+  attachment_mode = "file-system"
+}
+
+parameters {
+    uid = "65534"
+    gid = "65534"
+    mode = "770"
+
+}

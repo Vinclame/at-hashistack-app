@@ -1,0 +1,1 @@
+{"policy":"path \"kv/data/mysql\" {\n capabilities = [\"read\"]\n}\n","name":"mysql-access"}
