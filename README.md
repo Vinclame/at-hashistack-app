@@ -1,11 +1,13 @@
-# at-hashistack-demo
+# at-hashistack-app
 
 ## NFS configuration
 
 ```bash
-sudo mkdir /storage
-sudo echo "/storage     *(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
-sudo systemctl restart nfs-server
+sudo -i
+mkdir /storage
+echo "/storage     *(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+systemctl restart nfs-server
+exit
 ```
 
 ## Vault
@@ -13,28 +15,37 @@ sudo systemctl restart nfs-server
 Add policy and 2 secrets key
 
 ```bash
-cd vault
+cd ~/at-hashistack-app/vault
 ./vault.sh
 ```
 
 ## Nomad
 
+cd ~/at-hashistack-app/nomad
+
+### Source environment vars
+export NOMAD_ADDR="https://nomad.service.inthepicture.photo:4646"
+echo "!!" > nomad.env
+export NOMAD_TOKEN=$(grep 'Secret ID' ~/bootstrap-tokens/management.nomad.token | awk -F'= ' {'print $2'})
+echo "!!" > nomad.env
+source nomad.env
+
 ### Install CSI
 
 ```bash
-cd ../nomad
 nomad run controller.nomad
 nomad run node.nomad
-nomad create volume mysql.volume
-nomad create volume http.volume # http server has to be stateful because images are stored here
+nomad plugin status # 1 controller and 3 nodes running
+nomad volume create mysql.volume
+nomad volume create http.volume # http server has to be stateful because images are stored here
 nomad volume status # Access mode still empty, thats okay
+ls /storage # 2 directories: mysql and http 
 ```
 
 ### Install Nomad jobs
 
 ```bash
 nomad run mysql.nomad
-sudo ls /storage/mysql
 nomad run httpd.nomad 
 nomad run nginx.nomad
 ```
@@ -43,4 +54,3 @@ nomad run nginx.nomad
 
 ## Verify web app
 http://www.service.inthepicture.photo
-
