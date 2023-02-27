@@ -24,11 +24,14 @@ cd ~/at-hashistack-app/vault
 cd ~/at-hashistack-app/nomad
 
 ### Source environment vars
+
+```bash
 export NOMAD_ADDR="https://nomad.service.inthepicture.photo:4646"
 echo "!!" > nomad.env
 export NOMAD_TOKEN=$(grep 'Secret ID' ~/bootstrap-tokens/management.nomad.token | awk -F'= ' {'print $2'})
-echo "!!" > nomad.env
+echo "!!" >> nomad.env
 source nomad.env
+```
 
 ### Install CSI
 
@@ -53,4 +56,4 @@ nomad run nginx.nomad
 ## Check services in Consul
 
 ## Verify web app
-http://www.service.inthepicture.photo
+http://web.service.inthepicture.photo

@@ -12,7 +12,7 @@ job "nginx" {
     }
 
     service {
-      name = "www"
+      name = "web"
       port = "http"
       tags = ["nginx-frontend"]
     }
