@@ -6,6 +6,7 @@
 sudo -i
 mkdir /storage
 echo "/storage     *(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+systemctl enable nfs-server
 systemctl restart nfs-server
 exit
 ```
