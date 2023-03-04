@@ -14,7 +14,6 @@ job "http" {
     }
 
     network {
-      mode = "host"
       port "http" {
         to = 80
       }
