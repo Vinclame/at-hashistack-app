@@ -37,19 +37,17 @@ job "nginx" {
       template {
         data = <<EOF
 {{ $canary := "" }}
-{{ $canary = "no" }}
-{{ range service "http" }}{{ if in .Tags "test" }} {{ $canary = "yes" }} {{ break }} {{ end }}{{ end }}
-{{ if eq $canary "yes" }}
 upstream test {
-{{ range service "http" }}{{ if in .Tags "test" }}
+{{ range service "http" }}
+{{ if in .Tags "test" }}
   server {{ .Address }}:{{ .Port }};
-{{ end }}{{ end }}
-}
-{{ else }}
-upstream test {
+{{ $canary = "1" }} 
+{{ break }}
+{{ end -}} {{ end -}}
+{{ if eq $canary "" }}
 server 127.0.0.1:65535;
+{{ end -}}
 }
-{{ end }}
 server {
    listen 8080;
    server_name  test.service.inthepicture.photo;
