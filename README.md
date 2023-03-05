@@ -58,3 +58,17 @@ nomad run nginx.nomad
 
 ## Verify web app
 http://web.service.inthepicture.photo
+
+## Upgrading inthepicture app
+. change image version in http.nomad
+```bash
+nomad run http.nomad
+```
+
+### Testing web app after canary upgrade
+http://test.service.inthepicture.photo
+
+## promote deployment
+```bash
+nomad deployment promote <id>
+```
