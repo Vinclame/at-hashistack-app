@@ -14,7 +14,11 @@ job "nginx" {
     service {
       name = "web"
       port = "http"
-      tags = ["nginx-frontend"]
+    }
+
+    service {
+      name = "test"
+      port = "http"
     }
 
     task "nginx" {
@@ -32,15 +36,38 @@ job "nginx" {
 
       template {
         data = <<EOF
-upstream backend {
-{{ range service "http" }}
+{{ $canary := "" }}
+{{ $canary = "no" }}
+{{ range service "http" }}{{ if in .Tags "test" }} {{ $canary = "yes" }} {{ break }} {{ end }}{{ end }}
+{{ if eq $canary "yes" }}
+upstream test {
+{{ range service "http" }}{{ if in .Tags "test" }}
   server {{ .Address }}:{{ .Port }};
-{{ else }}server 127.0.0.1:65535; # force a 502
-{{ end }}
+{{ end }}{{ end }}
 }
+{{ else }}
+upstream test {
+server 127.0.0.1:65535;
+}
+{{ end }}
+server {
+   listen 8080;
+   server_name  test.service.inthepicture.photo;
+   client_max_body_size 5M;
+
+   location / {
+      proxy_pass http://test;
+   }
+}
+
+upstream backend {
+{{ range service "http" }}{{ if in .Tags "production" }}
+  server {{ .Address }}:{{ .Port }};
+{{ end }}{{ end }} }
 
 server {
    listen 8080;
+   server_name  web.service.inthepicture.photo;
    client_max_body_size 5M;
 
    location / {
@@ -48,7 +75,6 @@ server {
    }
 }
 EOF
-
         destination   = "local/load-balancer.conf"
         change_mode   = "signal"
         change_signal = "SIGHUP"

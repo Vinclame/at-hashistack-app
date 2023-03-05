@@ -3,7 +3,19 @@ job "http" {
   type        = "service"
 
   group "http" {
-    count = 1
+    count = 2
+
+    restart {
+      mode = "fail"
+    }
+
+    update {
+      max_parallel = 1
+      canary = 1
+      min_healthy_time = "30s"
+      healthy_deadline = "5m"
+      auto_promote = false
+    }
 
     volume "http" {
       type            = "csi"
@@ -22,7 +34,8 @@ job "http" {
     service {
       name = "http"
       port = "http"
-      tags = ["backend"]
+      tags = ["production"]
+      canary_tags = ["test"]
 
       check {
         type     = "http"
@@ -33,7 +46,8 @@ job "http" {
       }
     }
 
-    task "http" {
+	task "http" {
+
       driver = "docker"
 
       vault {
@@ -45,7 +59,7 @@ job "http" {
       }
 
       config {
-        image = "atcomp/inthepicture"
+        image = "atcomp/inthepicture:1.0"
         ports = ["http"]
         force_pull = true
       }

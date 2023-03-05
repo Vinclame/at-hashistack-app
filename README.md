@@ -50,7 +50,7 @@ ls /storage # 2 directories: mysql and http
 
 ```bash
 nomad run mysql.nomad
-nomad run httpd.nomad 
+nomad run http.nomad 
 nomad run nginx.nomad
 ```
 
