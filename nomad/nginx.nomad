@@ -56,6 +56,14 @@ server {
    location / {
       proxy_pass http://test;
    }
+
+   error_page 502 @html;
+
+   location @html {
+     add_header Content-Type text/plain always;
+     return 200 'No test';
+   }
+
 }
 
 upstream backend {

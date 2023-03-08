@@ -46,7 +46,7 @@ job "http" {
       }
     }
 
-	task "http" {
+    task "http" {
 
       driver = "docker"
 
