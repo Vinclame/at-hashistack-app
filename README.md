@@ -28,7 +28,7 @@ cd ~/at-hashistack-app/nomad
 
 ```bash
 export NOMAD_ADDR="https://nomad.service.inthepicture.photo:4646"
-echo "!!" > nomad.env
+echo "!!" >> nomad.env
 export NOMAD_TOKEN=$(grep 'Secret ID' ~/bootstrap-tokens/management.nomad.token | awk -F'= ' {'print $2'})
 echo "!!" >> nomad.env
 source nomad.env
